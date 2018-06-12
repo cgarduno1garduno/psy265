@@ -1,15 +1,38 @@
-close all; clear all; clc; 
+%% PSY 265, HW6, spring2018
+% @author Cristopher Garduno Luna
 
-test = initNeuron('rsn'); %init test neuron
-test.PassStructByReference = true;
-I = ones(1,test.T) * 125;
+%% Problem 1
+% clean workspace and close plots
+close all; clear all;
 
-for t = 1:(test.T-1)
-    test = compEuler(test, I, t);
+% initialize neurons
+RSN1 = initNeuron('rsn');
+RSN2 = initNeuron('rsn');
+MSN1 = initNeuron('msn');
+MSN2 = initNeuron('msn');
+
+% initialize weights, first number is RSN number, second is MSN number
+We11 = 275; We12 = 275; We21 = 275; We22 = 275;
+Wi = -30;
+
+% initialize current injection for RSN1
+% 100pA starting at t = 100
+I_rsn1 = [zeros(1,100), 100 * ones(1,RSN1.T-100)];
+
+% run simulation 
+for t = 1:(RSN1.T-1)
+    RSN1 = compEuler(RSN1, I_rsn1(t), t);
+
+    if t == 1  % no input from each MSN at t = 1
+        MSN1 = compEuler(MSN1, RSN1.post(t)*We11, t);
+        MSN2 = compEuler(MSN2, RSN1.post(t)*We12, t);
+    else 
+        MSN1 = compEuler(MSN1, RSN1.post(t)*We12 + MSN2.post(t-1)*Wi, t);
+        MSN2 = compEuler(MSN2, RSN1.post(t)*We12 + MSN1.post(t-1)*Wi, t);
+    end
 end
 
-
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+%% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ %%
 
 % initNeuron initializes neuron of a type 'Type'
 %
@@ -38,11 +61,11 @@ end
 % compEuler: compute Euler's method for a neuron at time 't', given current 'current'
 %
 % @param neuron : neuron [struct] containing neuron characteristics
-% @param current: current injection
+% @param current: current injection at time t
 % @param t      : current time instance
 % @return neuron: neuron [struct] with modified characteristics
 function neuron = compEuler(neuron, current, t)
-neuron.v(t+1) = neuron.v(t) + (current(t) + neuron.E + (neuron.k * ...
+neuron.v(t+1) = neuron.v(t) + (current + normrnd(0,200) + neuron.E + (neuron.k * ...
     (neuron.v(t) - neuron.v_r) * (neuron.v(t) - neuron.v_t)) - neuron.u(t)) / neuron.c;
 neuron.u(t+1) = neuron.u(t) + neuron.a * (neuron.v(t) - neuron.v_r) - neuron.b * neuron.u(t);
 neuron = spikeCheck(neuron, t);
