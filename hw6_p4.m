@@ -47,16 +47,19 @@ for n = 1:trials
                 t, 'check');
         end
         
+        if t > 2000
+        	disp('t > 2000');
+        end
         % assign reponse values and times
         if     MSN1.responseTime > 0
             response = 1; 
-            RTs(n) = MSN1.responseTime;
+            RTs(n) = MSN1.responseTime; break;
         elseif MSN2.responseTime > 0
             response = 2; 
-            RTs(n) = MSN2.responseTime;
+            RTs(n) = MSN2.responseTime; break;
         elseif t > 2000 % check if no MSN response after 2000ms
             response = randi(2); % random integer between 1 and 2
-            RTs(n) = 2000;
+            RTs(n) = 2000; break;
         end
     end
 
@@ -103,3 +106,21 @@ for n = 1:trials
     end
 
 end
+
+
+%% plot
+subplot(3,1,1);
+plot(movmean(RTs, 21));
+xlabel('Trials'); ylabel('Reaction Time (ms)'); 
+title('Reaction Time of Network across Trials');
+set(findall(gca, 'Type', 'Line'),'LineWidth',1.5);
+subplot(3,1,2);
+plot(movmean(accuracy, 21));
+xlabel('Trials'); ylabel('Accuracy ([0, 1])'); 
+title('Accuracy of Network across Trials');
+set(findall(gca, 'Type', 'Line'),'LineWidth',1.5);
+subplot(3,1,3);
+plot(DA);
+xlabel('Trials'); ylabel('Dopamine'); 
+title('Dopamine across Trials');
+set(findall(gca, 'Type', 'Line'),'LineWidth',1.5);
