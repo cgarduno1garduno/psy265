@@ -11,10 +11,12 @@ if strcmp('rsn',Type)
     neuron.d = 100; neuron.c = 100; neuron.v_r = -60; neuron.v_t = -40;
     neuron.k = 0.7; neuron.E = 0; neuron.a = -0.06; neuron.b = 0.03;
     neuron.v_peak = 35; neuron.v_reset = -50; neuron.neuronType = Type;
+    neuron.responseTime = 0;
 elseif strcmp('msn',Type)
     neuron.d = 150; neuron.c = 50; neuron.v_r = -80; neuron.v_t = -25;
     neuron.k = 1.0;   neuron.E = 70; neuron.a = -0.20; neuron.b = 0.01;
-    neuron.v_peak = 40; neuron.v_reset = -55; neuron.neuronType = Type;  
+    neuron.v_peak = 40; neuron.v_reset = -55; neuron.neuronType = Type;
+    neuron.responseTime = 0;  
 else
     error('Incorrect neuron type. Available neurons: rsn, msn');
 end

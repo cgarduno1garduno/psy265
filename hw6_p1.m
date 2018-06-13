@@ -14,7 +14,7 @@ MSN2 = initNeuron('msn');
 % initialize weights, first number is RSN number, second is MSN number
 We11 = 275; We12 = 275; We21 = 275; We22 = 275; Wi = -30;
 
-% initialize current injections (100pA)
+% initialize current injections (100pA on R1 after 100ms)
 I_rsn1 = [zeros(1,100), 100 * ones(1,RSN1.T-100)];
 I_rsn2 = [zeros(1,RSN1.T)];
 
